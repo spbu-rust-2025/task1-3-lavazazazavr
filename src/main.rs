@@ -1,18 +1,25 @@
-use std::fs;
+use std::fs::File;
 use std::io;
 
 fn main() {
     let mut input = String::new();
+    let _ = io::stdin().read_line(&mut input);
 
-    match io::stdin().read_line(&mut input) {
+    let input = input.trim();
+
+    let path = input.trim_end_matches('/');
+    if path.is_empty() || path == "/" {
+        println!("failure");
+        return;
+    }
+    let file: Result<File, io::Error> = File::open(path);
+
+    match file {
         Ok(_) => {
-            let path = input.trim();
-
-            match fs::read_to_string(path) {
-                Ok(_) => println!("success"),
-                Err(_) => println!("failure"),
-            }
+            println!("success");
         }
-        Err(_) => println!("failure"),
+        Err(_) => {
+            println!("failure");
+        }
     }
 }
